@@ -27,6 +27,9 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # history
 setopt histignorealldups appendhistory sharehistory hist_ignore_space
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
 
 # aliases
 alias ls='ls --color=auto'

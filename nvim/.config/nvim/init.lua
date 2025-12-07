@@ -11,6 +11,8 @@ vim.opt.hlsearch = false
 vim.opt.incsearch = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+-- vim.opt.fuzzy = true
+-- vim.opt.nosort = true
 vim.opt.winborder = "rounded"
 vim.opt.completeopt = { "menuone", "noinsert" }
 vim.g.mapleader = " "
@@ -37,6 +39,7 @@ vim.pack.add({
 	{ src = "https://github.com/ibhagwan/fzf-lua" },
 	{ src = "https://github.com/mrcjkb/rustaceanvim" },
 	{ src = "https://github.com/j-hui/fidget.nvim" },
+	{ src = "https://github.com/stevearc/conform.nvim" },
 })
 
 vim.cmd("colorscheme kanagawa-dragon")
@@ -58,6 +61,17 @@ require("mini.completion").setup()
 require("oil").setup()
 require("fzf-lua").setup({ fzf_colors = true })
 require("fidget").setup()
+require("mini.diff").setup()
+
+require("conform").setup({
+	formatters_by_ft = {
+		lua = { "stylua" },
+		rust = { "rustfmt" },
+	},
+	format_on_save = {
+		lsp_format = "fallback",
+	},
+})
 
 vim.g.rustaceanvim = {
 	tools = {},
@@ -78,3 +92,14 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+local function confirm_tab()
+	if vim.fn.pumvisible() == 1 then
+		-- confirm current item
+		return vim.api.nvim_replace_termcodes("<C-y>", true, false, true)
+	else
+		-- no menu: insert a normal tab (will be turned into spaces because of 'expandtab')
+		return "\t"
+	end
+end
+
+vim.keymap.set("i", "<Tab>", confirm_tab, { expr = true, silent = true })
