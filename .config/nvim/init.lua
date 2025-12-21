@@ -94,10 +94,8 @@ vim.api.nvim_create_autocmd("FileType", {
 
 local function confirm_tab()
 	if vim.fn.pumvisible() == 1 then
-		-- confirm current item
 		return vim.api.nvim_replace_termcodes("<C-y>", true, false, true)
 	else
-		-- no menu: insert a normal tab (will be turned into spaces because of 'expandtab')
 		return "\t"
 	end
 end

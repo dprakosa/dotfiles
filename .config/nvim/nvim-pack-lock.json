@@ -75,10 +75,6 @@
     "rustaceanvim": {
       "rev": "9367b87839b56656d47976c7ca2dba448ec87dd9",
       "src": "https://github.com/mrcjkb/rustaceanvim"
-    },
-    "zenbones.nvim": {
-      "rev": "a934bc07d2ed4a98b74526c172d7f043736d8935",
-      "src": "https://github.com/zenbones-theme/zenbones.nvim"
     }
   }
 }
