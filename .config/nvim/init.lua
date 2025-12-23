@@ -11,21 +11,22 @@ vim.opt.hlsearch = false
 vim.opt.incsearch = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
--- vim.opt.fuzzy = true
--- vim.opt.nosort = true
 vim.opt.winborder = "rounded"
-vim.opt.completeopt = { "menuone", "noinsert" }
-vim.g.mapleader = " "
-
+vim.opt.completeopt = { "menuone", "noinsert", "fuzzy", "nosort" }
 vim.lsp.inlay_hint.enable(true)
+vim.diagnostic.config({ virtual_text = true })
+
+vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format)
-vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action)
 vim.keymap.set("n", "<leader>fi", "<cmd>FzfLua files<CR>")
+vim.keymap.set("n", "<leader>fj", "<cmd>FzfLua buffers<CR>")
+vim.keymap.set("n", "<leader>fd", "<cmd>FzfLua diagnostics_document<CR>")
+vim.keymap.set("n", "<leader>fD", "<cmd>FzfLua diagnostics_workspace<CR>")
 vim.keymap.set("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>")
 vim.keymap.set("n", "<leader>fh", "<cmd>FzfLua help_tags<CR>")
-vim.keymap.set("n", "<leader>fd", "<cmd>FzfLua diagnostics_workspace<CR>")
+vim.keymap.set("n", "<leader>fr", "<cmd>FzfLua lsp_references<CR>")
+vim.keymap.set("n", "<leader>ca", "<cmd>FzfLua lsp_code_actions<CR>")
 vim.keymap.set("n", "<leader>e", ":Oil<CR>")
-vim.diagnostic.config({ virtual_text = true })
 
 vim.pack.add({
 	{ src = "https://github.com/rebelot/kanagawa.nvim" },
@@ -44,9 +45,23 @@ vim.pack.add({
 
 vim.cmd("colorscheme kanagawa-dragon")
 
-require("nvim-treesitter.configs").setup({ auto_install = true, highlight = { enable = true } })
+-- treesitter
+
+require("nvim-treesitter").setup({
+	install_dir = vim.fn.stdpath("data") .. "/site",
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "lua", "vim", "vimdoc", "zsh" },
+	callback = function()
+		vim.treesitter.start()
+	end,
+})
+
 require("mason").setup()
-require("mason-lspconfig").setup()
+require("mason-lspconfig").setup({
+	ensure_installed = { "lua_ls" },
+})
 require("mini.icons").setup()
 MiniIcons.tweak_lsp_kind()
 local gen_loader = require("mini.snippets").gen_loader
@@ -57,39 +72,20 @@ require("mini.snippets").setup({
 })
 require("mini.pairs").setup()
 require("mini.statusline").setup()
-require("mini.completion").setup()
-require("oil").setup()
-require("fzf-lua").setup({ fzf_colors = true })
-require("fidget").setup()
+require("mini.completion").setup({})
 require("mini.diff").setup()
+require("mini.cmdline").setup()
+require("oil").setup()
+require("fzf-lua").setup({ fzf_colors = true, undotree = { previewer = "undotree_native", locate = false } })
+require("fidget").setup()
 
 require("conform").setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
-		rust = { "rustfmt" },
 	},
 	format_on_save = {
 		lsp_format = "fallback",
 	},
-})
-
-vim.g.rustaceanvim = {
-	tools = {},
-	server = {
-		default_settings = {
-			["rust-analyzer"] = {},
-		},
-	},
-	dap = {},
-}
-
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "rust",
-	callback = function()
-		vim.keymap.set("n", "K", function()
-			vim.cmd.RustLsp({ "hover", "actions" })
-		end, { buffer = true, silent = true })
-	end,
 })
 
 local function confirm_tab()
@@ -101,3 +97,31 @@ local function confirm_tab()
 end
 
 vim.keymap.set("i", "<Tab>", confirm_tab, { expr = true, silent = true })
+
+vim.lsp.config("lua_ls", {
+	settings = {
+		Lua = {
+			diagnostics = { globals = { "vim", "MiniIcons" } },
+		},
+	},
+})
+
+-- vim.g.rustaceanvim = {
+-- 	tools = {},
+-- 	server = {
+-- 		default_settings = {
+-- 			["rust-analyzer"] = {},
+-- 		},
+-- 	},
+-- 	dap = {},
+-- }
+--
+-- vim.api.nvim_create_autocmd("FileType", {
+-- 	pattern = "rust",
+-- 	callback = function()
+-- 		vim.keymap.set("n", "K", function()
+-- 			vim.cmd.RustLsp({ "hover", "actions" })
+-- 		end, { buffer = true, silent = true })
+-- 	end,
+-- })
+--
