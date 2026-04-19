@@ -1,5 +1,6 @@
 vim.opt.termguicolors = true
-vim.opt.relativenumber = true
+vim.opt.number = true
+-- vim.opt.relativenumber = true
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
@@ -14,10 +15,9 @@ vim.opt.smartcase = true
 vim.opt.winborder = "rounded"
 vim.opt.completeopt = { "menuone", "noinsert", "fuzzy", "nosort" }
 vim.lsp.inlay_hint.enable(true)
-vim.diagnostic.config({ virtual_text = true })
 
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format)
+vim.keymap.set("n", "<leader>e", ":Oil<CR>")
 vim.keymap.set("n", "<leader>fi", "<cmd>FzfLua files<CR>")
 vim.keymap.set("n", "<leader>fj", "<cmd>FzfLua buffers<CR>")
 vim.keymap.set("n", "<leader>fd", "<cmd>FzfLua diagnostics_document<CR>")
@@ -26,7 +26,16 @@ vim.keymap.set("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>")
 vim.keymap.set("n", "<leader>fh", "<cmd>FzfLua help_tags<CR>")
 vim.keymap.set("n", "<leader>fr", "<cmd>FzfLua lsp_references<CR>")
 vim.keymap.set("n", "<leader>ca", "<cmd>FzfLua lsp_code_actions<CR>")
-vim.keymap.set("n", "<leader>e", ":Oil<CR>")
+vim.keymap.set("n", "<leader>fo", "<cmd>FzfLua oldfiles<CR>")
+vim.keymap.set("n", "<leader>fs", "<cmd>FzfLua lsp_document_symbols<CR>")
+vim.keymap.set("n", "<leader>fS", "<cmd>FzfLua lsp_workspace_symbols<CR>")
+vim.keymap.set("n", "<leader>fm", "<cmd>FzfLua marks<CR>")
+vim.keymap.set("n", "<leader>fp", "<cmd>FzfLua resume<CR>")
+vim.keymap.set("n", "<leader>gc", "<cmd>FzfLua git_commits<CR>")
+vim.keymap.set("n", "<leader>gs", "<cmd>FzfLua git_status<CR>")
+vim.keymap.set("n", "<leader>gb", "<cmd>FzfLua git_branches<CR>")
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { noremap = true, silent = true })
 
 vim.pack.add({
 	{ src = "https://github.com/rebelot/kanagawa.nvim" },
@@ -41,6 +50,8 @@ vim.pack.add({
 	{ src = "https://github.com/mrcjkb/rustaceanvim" },
 	{ src = "https://github.com/j-hui/fidget.nvim" },
 	{ src = "https://github.com/stevearc/conform.nvim" },
+	{ src = "https://github.com/OXY2DEV/markview.nvim" },
+	{ src = "https://github.com/rachartier/tiny-inline-diagnostic.nvim" },
 })
 
 vim.cmd("colorscheme kanagawa-dragon")
@@ -51,17 +62,63 @@ require("nvim-treesitter").setup({
 	install_dir = vim.fn.stdpath("data") .. "/site",
 })
 
+require("nvim-treesitter").install({
+	"lua",
+	"vim",
+	"vimdoc",
+	"markdown",
+	"bash",
+	"python",
+	"dockerfile",
+	"toml",
+	"c",
+})
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "lua", "vim", "vimdoc", "zsh" },
 	callback = function()
-		vim.treesitter.start()
+		pcall(vim.treesitter.start)
 	end,
 })
+
+-- lsp
 
 require("mason").setup()
 require("mason-lspconfig").setup({
 	ensure_installed = { "lua_ls" },
 })
+
+-- formatting
+
+require("conform").setup({
+	formatters_by_ft = {
+		lua = { "stylua" },
+		python = { "ruff_format" },
+		typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+	},
+	default_format_opts = {
+		lsp_format = "fallback",
+	},
+})
+
+vim.keymap.set("n", "<leader>lf", function()
+	require("conform").format({ async = true })
+end)
+
+-- diagnostics
+
+vim.diagnostic.config({ virtual_text = false })
+require("tiny-inline-diagnostic").setup({
+	options = {
+		show_source = {
+			enabled = true,
+		},
+		multilines = {
+			enabled = true,
+		},
+	},
+})
+
+-- setups
+
 require("mini.icons").setup()
 MiniIcons.tweak_lsp_kind()
 local gen_loader = require("mini.snippets").gen_loader
@@ -70,23 +127,36 @@ require("mini.snippets").setup({
 		gen_loader.from_lang(),
 	},
 })
-require("mini.pairs").setup()
+-- require("mini.pairs").setup()
 require("mini.statusline").setup()
 require("mini.completion").setup({})
-require("mini.diff").setup()
-require("mini.cmdline").setup()
+require("mini.diff").setup({
+	view = {
+		style = "sign",
+	},
+})
+require("mini.cmdline").setup({
+	autopeek = {
+		enable = false,
+	},
+})
+
+
 require("oil").setup()
 require("fzf-lua").setup({ fzf_colors = true, undotree = { previewer = "undotree_native", locate = false } })
 require("fidget").setup()
 
-require("conform").setup({
-	formatters_by_ft = {
-		lua = { "stylua" },
-	},
-	format_on_save = {
-		lsp_format = "fallback",
-	},
-})
+-- undotree
+
+vim.opt.undofile = true
+vim.cmd("packadd nvim.undotree")
+vim.keymap.set("n", "<leader>u", function()
+	require("undotree").open({
+		command = "botright 50vnew",
+	})
+end)
+
+-- tab completion
 
 local function confirm_tab()
 	if vim.fn.pumvisible() == 1 then
@@ -98,6 +168,8 @@ end
 
 vim.keymap.set("i", "<Tab>", confirm_tab, { expr = true, silent = true })
 
+-- fix global error
+
 vim.lsp.config("lua_ls", {
 	settings = {
 		Lua = {
@@ -105,23 +177,3 @@ vim.lsp.config("lua_ls", {
 		},
 	},
 })
-
--- vim.g.rustaceanvim = {
--- 	tools = {},
--- 	server = {
--- 		default_settings = {
--- 			["rust-analyzer"] = {},
--- 		},
--- 	},
--- 	dap = {},
--- }
---
--- vim.api.nvim_create_autocmd("FileType", {
--- 	pattern = "rust",
--- 	callback = function()
--- 		vim.keymap.set("n", "K", function()
--- 			vim.cmd.RustLsp({ "hover", "actions" })
--- 		end, { buffer = true, silent = true })
--- 	end,
--- })
---
