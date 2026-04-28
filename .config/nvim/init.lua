@@ -34,8 +34,9 @@ vim.keymap.set("n", "<leader>fp", "<cmd>FzfLua resume<CR>")
 vim.keymap.set("n", "<leader>gc", "<cmd>FzfLua git_commits<CR>")
 vim.keymap.set("n", "<leader>gs", "<cmd>FzfLua git_status<CR>")
 vim.keymap.set("n", "<leader>gb", "<cmd>FzfLua git_branches<CR>")
-vim.keymap.set("n", "<C-d>", "<C-d>zz", { noremap = true, silent = true })
-vim.keymap.set("n", "<C-u>", "<C-u>zz", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "gd", vim.lsp.buf.definition)
 
 vim.pack.add({
 	{ src = "https://github.com/rebelot/kanagawa.nvim" },
@@ -67,11 +68,19 @@ require("nvim-treesitter").install({
 	"vim",
 	"vimdoc",
 	"markdown",
+	"json",
+	"yaml",
+	"toml",
 	"bash",
 	"python",
 	"dockerfile",
-	"toml",
 	"c",
+	"javascript",
+	"typescript",
+	"tsx",
+	"html",
+	"css",
+	"scss",
 })
 vim.api.nvim_create_autocmd("FileType", {
 	callback = function()
@@ -107,6 +116,8 @@ end)
 
 vim.diagnostic.config({ virtual_text = false })
 require("tiny-inline-diagnostic").setup({
+	-- preset = "minimal",
+	transparent_bg = true,
 	options = {
 		show_source = {
 			enabled = true,
@@ -128,19 +139,19 @@ require("mini.snippets").setup({
 	},
 })
 -- require("mini.pairs").setup()
-require("mini.statusline").setup()
 require("mini.completion").setup({})
+require("mini.git").setup()
 require("mini.diff").setup({
 	view = {
 		style = "sign",
 	},
 })
+require("mini.statusline").setup()
 require("mini.cmdline").setup({
 	autopeek = {
 		enable = false,
 	},
 })
-
 
 require("oil").setup()
 require("fzf-lua").setup({ fzf_colors = true, undotree = { previewer = "undotree_native", locate = false } })
