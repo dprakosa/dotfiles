@@ -39,20 +39,20 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "gd", vim.lsp.buf.definition)
 
 vim.pack.add({
-	{ src = "https://github.com/rebelot/kanagawa.nvim" },
-	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
-	{ src = "https://github.com/neovim/nvim-lspconfig" },
-	{ src = "https://github.com/mason-org/mason.nvim" },
-	{ src = "https://github.com/mason-org/mason-lspconfig.nvim" },
-	{ src = "https://github.com/nvim-mini/mini.nvim" },
-	{ src = "https://github.com/stevearc/oil.nvim" },
-	{ src = "https://github.com/rafamadriz/friendly-snippets" },
-	{ src = "https://github.com/ibhagwan/fzf-lua" },
-	{ src = "https://github.com/mrcjkb/rustaceanvim" },
-	{ src = "https://github.com/j-hui/fidget.nvim" },
-	{ src = "https://github.com/stevearc/conform.nvim" },
-	{ src = "https://github.com/OXY2DEV/markview.nvim" },
-	{ src = "https://github.com/rachartier/tiny-inline-diagnostic.nvim" },
+  { src = "https://github.com/rebelot/kanagawa.nvim" },
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
+  { src = "https://github.com/neovim/nvim-lspconfig" },
+  { src = "https://github.com/mason-org/mason.nvim" },
+  { src = "https://github.com/mason-org/mason-lspconfig.nvim" },
+  { src = "https://github.com/nvim-mini/mini.nvim" },
+  { src = "https://github.com/stevearc/oil.nvim" },
+  { src = "https://github.com/rafamadriz/friendly-snippets" },
+  { src = "https://github.com/ibhagwan/fzf-lua" },
+  -- { src = "https://github.com/mrcjkb/rustaceanvim" },
+  { src = "https://github.com/j-hui/fidget.nvim" },
+  { src = "https://github.com/stevearc/conform.nvim" },
+  { src = "https://github.com/OXY2DEV/markview.nvim" },
+  { src = "https://github.com/rachartier/tiny-inline-diagnostic.nvim" },
 })
 
 vim.cmd("colorscheme kanagawa-dragon")
@@ -60,72 +60,72 @@ vim.cmd("colorscheme kanagawa-dragon")
 -- treesitter
 
 require("nvim-treesitter").setup({
-	install_dir = vim.fn.stdpath("data") .. "/site",
+  install_dir = vim.fn.stdpath("data") .. "/site",
 })
 
 require("nvim-treesitter").install({
-	"lua",
-	"vim",
-	"vimdoc",
-	"markdown",
-	"json",
-	"yaml",
-	"toml",
-	"bash",
-	"python",
-	"dockerfile",
-	"c",
-	"javascript",
-	"typescript",
-	"tsx",
-	"html",
-	"css",
-	"scss",
+  "lua",
+  "vim",
+  "vimdoc",
+  "markdown",
+  "json",
+  "yaml",
+  "toml",
+  "bash",
+  "python",
+  "dockerfile",
+  "c",
+  "javascript",
+  "typescript",
+  "tsx",
+  "html",
+  "css",
+  "scss",
 })
 vim.api.nvim_create_autocmd("FileType", {
-	callback = function()
-		pcall(vim.treesitter.start)
-	end,
+  callback = function()
+    pcall(vim.treesitter.start)
+  end,
 })
 
 -- lsp
 
 require("mason").setup()
 require("mason-lspconfig").setup({
-	ensure_installed = { "lua_ls" },
+  ensure_installed = { "lua_ls" },
 })
 
 -- formatting
 
 require("conform").setup({
-	formatters_by_ft = {
-		lua = { "stylua" },
-		python = { "ruff_format" },
-		typescriptreact = { "prettierd", "prettier", stop_after_first = true },
-	},
-	default_format_opts = {
-		lsp_format = "fallback",
-	},
+  formatters_by_ft = {
+    lua = { "stylua" },
+    python = { "ruff_format" },
+    typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+  },
+  default_format_opts = {
+    lsp_format = "fallback",
+  },
 })
 
 vim.keymap.set("n", "<leader>lf", function()
-	require("conform").format({ async = true })
+  require("conform").format({ async = true })
 end)
 
 -- diagnostics
 
 vim.diagnostic.config({ virtual_text = false })
 require("tiny-inline-diagnostic").setup({
-	-- preset = "minimal",
-	transparent_bg = true,
-	options = {
-		show_source = {
-			enabled = true,
-		},
-		multilines = {
-			enabled = true,
-		},
-	},
+  -- preset = "minimal",
+  transparent_bg = true,
+  options = {
+    show_source = {
+      enabled = true,
+    },
+    multilines = {
+      enabled = true,
+    },
+  },
 })
 
 -- setups
@@ -134,23 +134,23 @@ require("mini.icons").setup()
 MiniIcons.tweak_lsp_kind()
 local gen_loader = require("mini.snippets").gen_loader
 require("mini.snippets").setup({
-	snippets = {
-		gen_loader.from_lang(),
-	},
+  snippets = {
+    gen_loader.from_lang(),
+  },
 })
 -- require("mini.pairs").setup()
 require("mini.completion").setup({})
 require("mini.git").setup()
 require("mini.diff").setup({
-	view = {
-		style = "sign",
-	},
+  view = {
+    style = "sign",
+  },
 })
 require("mini.statusline").setup()
 require("mini.cmdline").setup({
-	autopeek = {
-		enable = false,
-	},
+  autopeek = {
+    enable = false,
+  },
 })
 
 require("oil").setup()
@@ -162,19 +162,19 @@ require("fidget").setup()
 vim.opt.undofile = true
 vim.cmd("packadd nvim.undotree")
 vim.keymap.set("n", "<leader>u", function()
-	require("undotree").open({
-		command = "botright 50vnew",
-	})
+  require("undotree").open({
+    command = "botright 50vnew",
+  })
 end)
 
 -- tab completion
 
 local function confirm_tab()
-	if vim.fn.pumvisible() == 1 then
-		return vim.api.nvim_replace_termcodes("<C-y>", true, false, true)
-	else
-		return "\t"
-	end
+  if vim.fn.pumvisible() == 1 then
+    return vim.api.nvim_replace_termcodes("<C-y>", true, false, true)
+  else
+    return "\t"
+  end
 end
 
 vim.keymap.set("i", "<Tab>", confirm_tab, { expr = true, silent = true })
@@ -182,9 +182,9 @@ vim.keymap.set("i", "<Tab>", confirm_tab, { expr = true, silent = true })
 -- fix global error
 
 vim.lsp.config("lua_ls", {
-	settings = {
-		Lua = {
-			diagnostics = { globals = { "vim", "MiniIcons" } },
-		},
-	},
+  settings = {
+    Lua = {
+      diagnostics = { globals = { "vim", "MiniIcons" } },
+    },
+  },
 })
