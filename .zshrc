@@ -32,17 +32,11 @@ HISTSIZE=10000
 SAVEHIST=10000
 
 # aliases
-alias ls='ls -l --color=auto'
+alias ls='ls -lh --color=auto'
 alias vim='nvim'
 alias copy='xclip -selection clipboard'
 
-# setup
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
 export PATH="$HOME/.local/bin:$PATH"
-[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
 export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
@@ -50,13 +44,40 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
+# go
+export PATH=$PATH:/usr/local/go/bin
+
+# nvm lazy-load
+# export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+export NVM_DIR="$HOME/.nvm"
+node_commands=(nvm node npm npx yarn pnpm corepack codex)
+load_nvm() {
+	for cmd in "${node_commands[@]}"; do
+		unalias "$cmd" 2>/dev/null
+	done
+	[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+	"$@"
+}
+for cmd in "${node_commands[@]}"; do
+	alias "$cmd=load_nvm $cmd"
+done
+
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+
 # fzf
 source /usr/share/doc/fzf/examples/key-bindings.zsh
 source /usr/share/doc/fzf/examples/completion.zsh
 
-export EDITOR=vi
-export VISUAL=vi
+export EDITOR=nvim
+export VISUAL=nvim
 
 # starship
 eval "$(starship init zsh)"
+
+[[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+bindkey '^[[1;5D' backward-word
+bindkey '^[[1;5C' forward-word
+
 

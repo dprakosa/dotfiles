@@ -27,7 +27,10 @@ sudo apt-get install -y \
   xclip \
   wl-clipboard \
   ripgrep \
-  libclang-dev
+  libclang-dev \
+  python3 \
+  python3-venv \
+  python3-pip
 
 # Neovim
 if grep -qi ubuntu /etc/os-release; then
