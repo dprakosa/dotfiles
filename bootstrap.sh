@@ -87,7 +87,7 @@ fi
 
 # Load NVM only for this bootstrap process.
 # Interactive shells lazy-load it from .zshrc.
-# shellcheck disable=SC1091
+# shellcheck source=/dev/null
 source "$NVM_DIR/nvm.sh"
 
 # Latest Node LTS
@@ -140,7 +140,10 @@ stow \
   --no-folding \
   --target="$HOME" \
   --verbose \
-  .
+  ghostty \
+  nvim \
+  tmux \
+  zsh
 
 # Install tmux plugins
 "$TPM_DIR/bin/install_plugins"
@@ -156,5 +159,10 @@ fi
 if [[ "$current_shell" != "$zsh_path" ]]; then
   chsh -s "$zsh_path"
 fi
+
+# System configuration
+sudo install -Dm644 \
+  "$DOTFILES_DIR/system/10-lid-suspend.conf" \
+  /etc/systemd/logind.conf.d/10-lid-suspend.conf
 
 echo "Done. Restart your terminal."
