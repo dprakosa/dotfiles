@@ -1,0 +1,16 @@
+font-family = JetBrainsMono Nerd Font Mono
+font-size = 14
+font-feature = -calt,-liga,-dlig
+
+cursor-style = block
+cursor-style-blink = false
+shell-integration-features = no-cursor
+
+theme = Kanagawa Dragon
+
+keybind = f11=toggle_fullscreen
+
+copy-on-select = false
+
+# custom-shader = shaders/cursor_sweep.glsl
+# custom-shader-animation = true
