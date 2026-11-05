@@ -26,7 +26,6 @@ sudo apt-get install -y \
   fzf \
   tmux \
   tree \
-  xclip \
   wl-clipboard \
   ripgrep \
   libclang-dev \
@@ -76,32 +75,53 @@ if ! has starship; then
 fi
 
 # NVM + Node
-NVM_VERSION="v0.40.7"
-export NVM_DIR="$HOME/.nvm"
-
-if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then
-  curl -fsSL \
-    "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh" |
-    PROFILE=/dev/null bash
-fi
-
+# NVM_VERSION="v0.40.7"
+# export NVM_DIR="$HOME/.nvm"
+#
+# if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then
+#   curl -fsSL \
+#     "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh" |
+#     PROFILE=/dev/null bash
+# fi
+#
 # Load NVM only for this bootstrap process.
 # Interactive shells lazy-load it from .zshrc.
 # shellcheck source=/dev/null
-source "$NVM_DIR/nvm.sh"
+# source "$NVM_DIR/nvm.sh"
 
-# Latest Node LTS
-nvm install --lts
-nvm alias default 'lts/*'
-nvm use --silent default
+# nvm install --lts
+# nvm alias default 'lts/*'
+# nvm use --silent default
 
-# pnpm via Corepack
+# fnm + Node
+if ! has fnm; then
+  curl -fsSL https://fnm.vercel.app/install |
+    bash -s -- --install-dir "$HOME/.local/bin" --skip-shell
+fi
+
+eval "$(fnm env --shell bash)"
+
+fnm install --lts
+fnm default lts-latest
+fnm use default
+
+# pnpm via corepack
 if ! has corepack; then
   npm install --global corepack
 fi
 
 corepack enable
 corepack install --global pnpm@latest
+
+# Codex
+if ! has codex; then
+  npm install --global @openai/codex
+fi
+
+# Bun
+if [[ ! -x "$HOME/.bun/bin/bun" ]]; then
+  curl -fsSL https://bun.sh/install | bash
+fi
 
 # Nerd Font
 font_dir="$HOME/.local/share/fonts"
@@ -126,7 +146,7 @@ if [[ ! -f "$font_regular" ]]; then
 fi
 
 # Tmux Plugin Manager
-TPM_DIR="$HOME/.tmux/plugins/tpm"
+TPM_DIR="$HOME/.config/tmux/plugins/tpm"
 
 if [[ ! -f "$TPM_DIR/tpm" ]]; then
   git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"

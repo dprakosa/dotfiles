@@ -10,7 +10,10 @@ theme = Kanagawa Dragon
 
 keybind = f11=toggle_fullscreen
 
-copy-on-select = false
+clipboard-read = allow
+clipboard-write = allow
+# copy-on-select = clipboard
+# copy-on-select = false
 
 # custom-shader = shaders/cursor_sweep.glsl
 # custom-shader-animation = true

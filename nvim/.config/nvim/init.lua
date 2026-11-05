@@ -70,7 +70,6 @@ vim.pack.add({
 		version = vim.version.range("1.*"),
 	},
 	{ src = "https://github.com/windwp/nvim-ts-autotag" },
-	{ src = "https://github.com/mistweaverco/kulala.nvim" },
 	-- { src = "https://github.com/MunifTanjim/nui.nvim" },
 	-- { src = "https://github.com/kndndrj/nvim-dbee" },
 	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
@@ -303,7 +302,24 @@ require("fidget").setup({
 
 local gitsigns = require("gitsigns")
 
-gitsigns.setup()
+-- gitsigns.setup()
+gitsigns.setup({
+	signs = {
+		add = { text = "▒" },
+		change = { text = "▒" },
+		delete = { text = "▒" },
+		topdelete = { text = "▒" },
+		changedelete = { text = "▒" },
+		untracked = { text = "▒" },
+	},
+	signs_staged = {
+		add = { text = "▒" },
+		change = { text = "▒" },
+		delete = { text = "▒" },
+		topdelete = { text = "▒" },
+		changedelete = { text = "▒" },
+	},
+})
 
 vim.keymap.set("n", "]h", function()
 	gitsigns.nav_hunk("next")
@@ -316,16 +332,6 @@ end)
 vim.keymap.set("n", "<leader>gp", gitsigns.preview_hunk)
 
 -- webdev
-
-require("kulala").setup({
-	global_keymaps = false,
-})
-vim.keymap.set("n", "<leader>rs", function()
-	require("kulala").run()
-end)
-vim.keymap.set("n", "<leader>ra", function()
-	require("kulala").run_all()
-end)
 
 require("nvim-ts-autotag").setup()
 
